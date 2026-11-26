@@ -9,12 +9,51 @@ import { chunkText } from "./chunker.js";
 import multer from "multer";
 import { extractPdfText } from "./pdf-loader.js";
 import { extractUrlText } from "./url-loader.js";
-
+import { handleMcpRequest } from "./mcp-server.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/documents", (req, res, next) => {
+  if (process.env.DISABLE_INGESTION === "true") {
+    return res.status(403).json({
+      error: "Document ingestion is disabled for the public demo.",
+    });
+  }
+
+  next();
+});
+
+
+app.post("/mcp", handleMcpRequest);
+
+app.get("/mcp", (req, res) => {
+  res.set("Allow", "POST");
+
+  res.status(405).json({
+    jsonrpc: "2.0",
+    error: {
+      code: -32000,
+      message: "Method not allowed",
+    },
+    id: null,
+  });
+});
+
+app.delete("/mcp", (req, res) => {
+  res.set("Allow", "POST");
+
+  res.status(405).json({
+    jsonrpc: "2.0",
+    error: {
+      code: -32000,
+      message: "Method not allowed",
+    },
+    id: null,
+  });
+});
 
 
 const upload = multer({
@@ -205,6 +244,10 @@ app.post("/api/documents/url", async (req, res) => {
 
 
 
-app.listen(PORT, () => {
-  console.log(`RAG API running at http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`RAG API running at http://localhost:${PORT}`);
+  });
+}
+
+export default app;
