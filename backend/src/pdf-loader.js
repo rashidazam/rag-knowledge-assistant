@@ -1,7 +1,7 @@
 
-import { PDFParse } from "pdf-parse";
-
 export async function extractPdfText(buffer) {
+  const { PDFParse } = await import("pdf-parse");
+
   const parser = new PDFParse({
     data: new Uint8Array(buffer),
   });
