@@ -14,6 +14,7 @@
     "@google/genai": "^3.6.1",
     "@huggingface/transformers": "^4.3.2",
     "@modelcontextprotocol/sdk": "^1.32.2",
+    "@napi-rs/canvas": "^1.2.1",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.10",
