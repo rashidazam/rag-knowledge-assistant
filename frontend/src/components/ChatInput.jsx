@@ -6,7 +6,6 @@ import {
   TextField,
   IconButton,
   Paper,
-  Typography,
 } from "@mui/material";
 
 import { Send } from "lucide-react";
@@ -24,7 +23,12 @@ export default function ChatInput({ onSend, loading }) {
   };
 
   return (
-    <Box sx={{ p: { xs: 1.5, md: 3 } }}>
+    <Box
+      sx={{
+        p: { xs: 1.5, md: 3 },
+        flexShrink: 0,
+      }}
+    >
       <Paper
         component="form"
         onSubmit={handleSubmit}
@@ -44,7 +48,7 @@ export default function ChatInput({ onSend, loading }) {
           multiline
           maxRows={6}
           variant="standard"
-          placeholder="Ask anything about your documents..."
+          placeholder="Ask a question about your knowledge base..."
           value={question}
           disabled={loading}
           onChange={(e) => setQuestion(e.target.value)}
@@ -74,16 +78,6 @@ export default function ChatInput({ onSend, loading }) {
           <Send size={22} />
         </IconButton>
       </Paper>
-
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        textAlign="center"
-        display="block"
-        sx={{ mt: 1 }}
-      >
-        AI-generated answers may be inaccurate. Verify the sources.
-      </Typography>
     </Box>
   );
 }

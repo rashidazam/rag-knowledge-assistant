@@ -22,6 +22,7 @@ import {
   Sun,
   MessageSquarePlus,
   RefreshCw,
+  Database,
 } from "lucide-react";
 
 import ChatWindow from "./components/ChatWindow";
@@ -92,10 +93,7 @@ export default function App() {
   }, []);
 
   const handleDocumentAdded = (document) => {
-    setDocuments((previous) => [
-      document,
-      ...previous,
-    ]);
+    setDocuments((previous) => [document, ...previous]);
   };
 
   const handleAsk = async (question) => {
@@ -149,53 +147,92 @@ export default function App() {
         sx={{
           display: "flex",
           flexDirection: "column",
+          width: "100%",
           height: "100dvh",
           overflow: "hidden",
         }}
       >
         {/* Header */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
+        <Box
+          component="header"
           sx={{
-            px: { xs: 1.5, md: 3 },
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            boxSizing: "border-box",
+            gap: { xs: 1, md: 3 },
+            px: { xs: 1, md: 3 },
             py: 1.5,
+            minHeight: 72,
             borderBottom: 1,
             borderColor: "divider",
             bgcolor: "background.paper",
             flexShrink: 0,
           }}
         >
-          <Stack direction="row" alignItems="center" spacing={1.5}>
+          {/* Left section */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: { xs: 1, md: 1.5 },
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
             {isMobile && (
               <IconButton
                 aria-label="Open knowledge base"
                 onClick={() => setMobileOpen(true)}
+                size="small"
               >
                 <Menu size={22} />
               </IconButton>
             )}
 
-            <BrainCircuit size={28} color={theme.palette.primary.main} />
+            <BrainCircuit
+              size={28}
+              color={theme.palette.primary.main}
+              style={{ flexShrink: 0 }}
+            />
 
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography
                 fontWeight={700}
-                sx={{ fontSize: { xs: 15, md: 20 } }}
+                noWrap
+                sx={{
+                  fontSize: { xs: 14, md: 20 },
+                  lineHeight: 1.4,
+                }}
               >
                 RAG Knowledge Assistant
               </Typography>
 
               {!isMobile && (
-                <Typography variant="caption" color="text.secondary">
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                >
                   Transformers.js · pgvector · Gemini
                 </Typography>
               )}
             </Box>
-          </Stack>
+          </Box>
 
-          <Stack direction="row" alignItems="center" spacing={0.5}>
+          {/* Right section */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: { xs: 0.25, md: 1 },
+              ml: "auto",
+              flexShrink: 0,
+            }}
+          >
             {!isMobile && (
               <Chip
                 size="small"
@@ -214,6 +251,7 @@ export default function App() {
                     : "default"
                 }
                 variant="outlined"
+                sx={{ mr: 1 }}
               />
             )}
 
@@ -221,26 +259,32 @@ export default function App() {
               <IconButton
                 aria-label="Check backend connection"
                 onClick={verifyBackend}
+                size={isMobile ? "small" : "medium"}
               >
-                <RefreshCw size={18} />
+                <RefreshCw size={19} />
               </IconButton>
             </Tooltip>
 
             <Tooltip title="New chat">
-              <span>
+              <Box
+                component="span"
+                sx={{ display: "inline-flex" }}
+              >
                 <IconButton
                   aria-label="New chat"
                   onClick={handleClearChat}
                   disabled={loading}
+                  size={isMobile ? "small" : "medium"}
                 >
                   <MessageSquarePlus size={21} />
                 </IconButton>
-              </span>
+              </Box>
             </Tooltip>
 
             <Tooltip title="Toggle theme">
               <IconButton
                 aria-label="Toggle theme"
+                size={isMobile ? "small" : "medium"}
                 onClick={() =>
                   setMode((previous) =>
                     previous === "dark" ? "light" : "dark"
@@ -254,11 +298,18 @@ export default function App() {
                 )}
               </IconButton>
             </Tooltip>
-          </Stack>
-        </Stack>
+          </Box>
+        </Box>
 
         {/* Main layout */}
-        <Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flex: 1,
+            minHeight: 0,
+            minWidth: 0,
+          }}
+        >
           <Drawer
             variant={isMobile ? "temporary" : "permanent"}
             open={isMobile ? mobileOpen : true}
@@ -273,6 +324,7 @@ export default function App() {
                 position: isMobile ? "fixed" : "relative",
                 height: "100%",
                 bgcolor: "background.paper",
+                overflowY: "auto",
               },
             }}
           >
@@ -298,6 +350,28 @@ export default function App() {
               error={error}
               onAsk={handleAsk}
             />
+
+            {/* Persistent RAG mode indicator */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                px: 2,
+                pt: 1,
+                flexShrink: 0,
+              }}
+            >
+              <Tooltip title="Answers are intended to use retrieved document context only. General knowledge fallback is disabled.">
+                <Chip
+                  icon={<Database size={14} />}
+                  label="Strict RAG · Knowledge Base Only"
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  sx={{ fontSize: "0.7rem" }}
+                />
+              </Tooltip>
+            </Box>
 
             <ChatInput
               onSend={handleAsk}
