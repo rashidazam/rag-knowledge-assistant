@@ -24,9 +24,9 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-import Sidebar from "./components/sidebar";
 import ChatWindow from "./components/ChatWindow";
 import ChatInput from "./components/ChatInput";
+import Sidebar from "./components/Sidebar";
 
 import {
   askQuestion,
